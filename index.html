@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Минималистичные Заметки</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 420px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px #0001;
+      padding: 28px 24px 20px 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #222;
+      font-weight: 500;
+      font-size: 2em;
+      margin-top: 0;
+      margin-bottom: 22px;
+    }
+    .add-note {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      border: none;
+      background: #f1f1f1;
+      border-radius: 8px 0 0 8px;
+      font-size: 1em;
+      padding: 11px;
+      outline: none;
+    }
+    button {
+      border: none;
+      background: #39b385;
+      color: #fff;
+      padding: 11px 18px;
+      font-size: 1em;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2c8972;
+    }
+    .notes-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .note {
+      background: #efefef;
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.18s;
+    }
+    .note .delete {
+      color: #c24141;
+      cursor: pointer;
+      font-size: 1.1em;
+      border: none;
+      background: none;
+      padding: 2px 8px;
+      border-radius: 5px;
+      transition: background 0.15s;
+    }
+    .note .delete:hover {
+      background: #fdeded;
+    }
+    @media (max-width: 480px) {
+      .container { margin: 16px; padding: 12px 4vw 10px 4vw; }
+      h1 { font-size: 1.4em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Заметки</h1>
+    <div class="add-note">
+      <input type="text" id="noteInput" placeholder="Новая заметка..." maxlength="90"/>
+      <button onclick="addNote()">+</button>
+    </div>
+    <ul class="notes-list" id="notesList"></ul>
+  </div>
+
+  <script>
+    // Загрузка заметок из localStorage
+    const notes = JSON.parse(localStorage.getItem('notes') || '[]');
+    const input = document.getElementById('noteInput');
+    const list = document.getElementById('notesList');
+
+    function renderNotes() {
+      list.innerHTML = '';
+      notes.forEach((n, i) => {
+        const li = document.createElement('li');
+        li.className = 'note';
+        li.innerHTML = `<span>${n}</span><button class="delete" onclick="deleteNote(${i})">&times;</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    function addNote() {
+      const value = input.value.trim();
+      if (value) {
+        notes.unshift(value);
+        input.value = '';
+        localStorage.setItem('notes', JSON.stringify(notes));
+        renderNotes();
+      }
+    }
+
+    function deleteNote(index) {
+      notes.splice(index, 1);
+      localStorage.setItem('notes', JSON.stringify(notes));
+      renderNotes();
+    }
+
+    input.addEventListener('keyup', e => { if (e.key === 'Enter') addNote(); });
+
+    renderNotes();
+  </script>
+</body>
+</html>
